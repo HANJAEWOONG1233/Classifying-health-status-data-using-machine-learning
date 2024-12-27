@@ -67,23 +67,88 @@
   - Adding `age` improved F1 Score to 0.72686 and AUC Score to 0.847056.
   - Adding `BMI` improved F1 Score to 0.730212 and AUC Score to 0.847312.
 
----
-
-## 3. Model Building and Optimization
+---## 3. Model Building and Optimization
 
 ### 3.1 Overview of LightGBM Model
-- **Method**: DART (Dropout Additive Regression Trees)
-  - **Advantages**: Prevents overfitting and improves generalization performance.
+LightGBM is a high-performance machine learning model based on Gradient Boosting. For this project, the **DART (Dropout Additive Regression Trees)** boosting method was utilized.
+
+- **DART**:
+  - Applies the dropout technique from neural networks to tree-based models to address over-specialization problems.
+  - **Working Principle**: Instead of dropping individual features, entire trees are omitted at the tree level.
+  - **Advantages**:
+    - Prevents overfitting.
+    - Improves generalization performance.
 
 ---
 
-### 3.2 Data Splitting
-- **Split Ratio**: 90% training data, 10% validation data
-- **Method**: Stratified sampling to maintain class proportions.
+### 3.2 Data Splitting (Using Stratified Sampling)
+The dataset was split into 90% training data and 10% validation data, with **Stratified Sampling** applied to maintain the proportion of the target variable (`health_status`).
 
----
+- **Stratified Sampling**:
+  - Ensures the data distribution ratio is preserved during sampling.
+  - Example: If the population has a class distribution of 54% and 46%, the sample will maintain the same ratio.
+  - **Benefits**:
+    - Alleviates data imbalance issues.
+    - Enables stable model performance evaluation.
+
+- **Rationale for Use**:
+  - Random splitting may cause class imbalances.
+  - Stratified sampling preserves data distribution and ensures consistent evaluation metrics.
+
 
 ### 3.3 Hyperparameter Optimization
+
+### 3.3 Hyperparameter Optimization
+To maximize the model's performance, **GridSearchCV** was used to systematically tune the hyperparameters.
+
+#### 1) Model Structure Parameters
+- **`max_depth` (Tree Depth)**:
+  - Initially set to `-1` (unlimited depth) and used as the baseline performance.
+  - GridSearch and manual exploration revealed that setting `max_depth=7` achieved similar performance while reducing overfitting and training time.
+  - **Rationale**: Appropriate tree depth ensures balanced performance and prevents overfitting.
+  
+- **`num_leaves` (Number of Leaf Nodes)**:
+  - Theoretical rule: `num_leaves` should follow \( 2^{\text{max_depth}} \).
+  - For `max_depth=7`, \( 2^7 = 128 \). The optimal value was determined to be **`num_leaves=45`** through GridSearch.
+
+#### 2) Sampling Parameters
+- **`subsample`**:
+  - Fraction of data used for training each tree.  
+  - Optimal value: **`subsample=0.1`**.
+- **`colsample_bytree`**:
+  - Fraction of features used for building each tree.  
+  - Optimal value: **`colsample_bytree=0.4`**.
+
+#### 3) Regularization Parameters
+- To prevent overfitting, the following parameters were tuned within the range [0, 1] with a step of 0.1:
+  - **`reg_alpha`** (L1 Regularization): Optimal value: **`0.7`**.
+  - **`reg_lambda`** (L2 Regularization): Optimal value: **`0.1`**.
+  - **`min_gain_to_split`** (Minimum Gain for Splitting): Optimal value: **`0`**.
+
+#### 4) Leaf Node Parameters
+- **`min_data_in_leaf`**:
+  - Minimum number of data points in a leaf node to prevent overfitting.
+  - Explored values in the range [100, 1000] with steps of 100.
+  - Optimal value: **`700`**.
+
+#### 5) Additional Adjustments
+- **`bagging_freq`**:
+  - Controls the frequency of bagging. Setting it to `0` disables bagging.
+  - Optimal value: **`bagging_freq=0`**.
+- **`n_estimators`**:
+  - Number of trees in the model.
+  - Explored values between [1, 2000] with steps of 100.
+  - Optimal value: **`1200`**.
+- **`max_bin`**:
+  - Number of bins for discretizing features.
+  - Explored values between [100, 1000].
+  - Optimal value: **`360`**.
+  - **Effect**: Improves accuracy at the cost of slightly slower training, while preventing overfitting.
+
+---
+
+The final optimal hyperparameters significantly improved the model's performance. For further details, refer to the model evaluation results.
+
 - **Optimized Parameters**:
   - `max_depth`: 7
   - `num_leaves`: 45
