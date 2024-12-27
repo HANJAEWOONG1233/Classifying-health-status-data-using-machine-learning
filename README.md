@@ -67,7 +67,9 @@
   - Adding `age` improved F1 Score to 0.72686 and AUC Score to 0.847056.
   - Adding `BMI` improved F1 Score to 0.730212 and AUC Score to 0.847312.
 
----## 3. Model Building and Optimization
+---
+
+## 3. Model Building and Optimization
 
 ### 3.1 Overview of LightGBM Model
 LightGBM is a high-performance machine learning model based on Gradient Boosting. For this project, the **DART (Dropout Additive Regression Trees)** boosting method was utilized.
@@ -95,8 +97,6 @@ The dataset was split into 90% training data and 10% validation data, with **Str
   - Random splitting may cause class imbalances.
   - Stratified sampling preserves data distribution and ensures consistent evaluation metrics.
 
-
-### 3.3 Hyperparameter Optimization
 
 ### 3.3 Hyperparameter Optimization
 To maximize the model's performance, **GridSearchCV** was used to systematically tune the hyperparameters.
