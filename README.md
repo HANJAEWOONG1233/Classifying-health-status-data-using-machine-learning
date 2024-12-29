@@ -1,185 +1,180 @@
-# 🏥 Health Status Classification Model 📊
+# Building and Optimizing a Health Status Classification Model Using Healthcare Data
 
-## 🚀 1. Introduction
+## 1. Introduction
 
-### 🎯 1.1 Objective of the Study
-- **Goal**: Develop an optimal machine learning model to classify patients' health status (`health_status`) using comprehensive healthcare data.
-- **Target Variable**:
-  - `0` (**Normal**): Healthy condition
-  - `1` (**Abnormal**): Unhealthy condition
+### 1.1 Objective of the Study
+- Build an optimal machine learning model for classifying patients' health status (health_status) using healthcare data.
+- **Target variable**:
+  - 0 (normal): Healthy condition
+  - 1 (abnormal): Unhealthy condition
 
 ---
 
-## 🛠️ 2. Data Preprocessing and Feature Selection
+## 2. Data Preprocessing and Feature Selection
 
-### 📚 2.1 Dataset Overview and Missing Value Check
+### 2.1 Dataset Overview and Missing Value Check
 - **Dataset Overview**:
-  - **Total Samples**: 140,000
-  - **Variables**: 26 (combination of continuous and categorical)
+  - Total data size: 140,000 samples
+  - Number of variables: 26 (continuous and categorical variables)
 
-| **Variable Name**    | **Description**                      |
-|----------------------|--------------------------------------|
-| `index`              | Unique index                         |
-| `name`               | Patient name                         |
-| `birth`              | Year of birth                        |
-| `bp_high`, `bp_low`  | Blood pressure values                |
-| `chol_good`, `chol_bad` | Good/Bad cholesterol levels      |
-| `iron_lvl`, `creatinine` | Iron/Creatinine levels           |
-| `urine_marker`      | Urine marker values                  |
-| `sugar_lvl`, `lipid_lvl`, `fat_content` | Sugar, lipid, and fat levels |
-| `oral_issues`       | Oral health issues                   |
-| `stature_inch`, `mass_kg`, `midsection_inch` | Height, weight, and waist size |
-| `immune_index`      | Immunity index                       |
-| `enzyme_1`, `enzyme_2`, `enzyme_3` | Enzyme levels           |
-| `vision_l`, `vision_r` | Left/Right vision                |
-| `audio_l`, `audio_r` | Left/Right hearing test results      |
-| `health_status`     | Health status (target variable)      |
+| Variable Name      | Description                   |
+|--------------------|-------------------------------|
+| index           | Unique index                  |
+| name            | Patient name                  |
+| birth           | Year of birth                 |
+| bp_high, bp_low | Blood pressure values         |
+| chol_good, chol_bad | Good/Bad cholesterol levels |
+| iron_lvl, creatinine | Iron/Creatinine levels      |
+| urine_marker    | Urine marker values           |
+| sugar_lvl, lipid_lvl, fat_content | Sugar, lipid, and fat levels |
+| oral_issues     | Oral health issues            |
+| stature_inch, mass_kg, midsection_inch | Height, weight, and waist size |
+| immune_index    | Immunity index                |
+| enzyme_1, enzyme_2, enzyme_3 | Enzyme levels          |
+| vision_l, vision_r | Left/Right vision           |
+| audio_l, audio_r | Left/Right hearing test results |
+| health_status   | Health status (target variable)|
 
 - **Missing Value Check**:
-  - **Result**: No missing values detected (`train_df.isna().sum()`).
+  - No missing values were found using train_df.isna().sum().
 
 ---
 
-### 🔍 2.2 Feature Importance Evaluation Using Mutual Information
-- **Purpose**: Identify and eliminate less relevant features to enhance model performance.
-- **Evaluation Criteria**: F1 Score and AUC Score using the LightGBM (LGBM) model.
-- **Removal Condition**: Remove features if both F1 and AUC scores improve upon removal.
-- **Retention Condition**: Keep features if scores remain constant or degrade.
+### 2.2 Feature Importance Evaluation Using Mutual Information
+- Evaluate feature importance to identify and remove less relevant features:
+  - **Evaluation criteria**: F1 Score and AUC Score using the LGBM model.
+  - **Removal condition**: Remove features if both scores improve.
+  - **Retention condition**: Retain features if scores remain constant or degrade.
 
 ---
 
-### ❌ 2.3 Removed Features
+### 2.3 Removed Features
 - **Continuous Variables**:
-  - `immune_index`: 
-    - **Improvement**: F1 Score → 0.72401, AUC Score → 0.844841
-  - `enzyme_1`: 
-    - **Improvement**: F1 Score → 0.723322, AUC Score → 0.844418
+  - immune_index: Removal improved F1 Score to 0.72401 and AUC Score to 0.844841.
+  - enzyme_1: Removal improved F1 Score to 0.723322 and AUC Score to 0.844418.
 - **Categorical Variables**:
-  - `urine_marker`, `audio_l`, `audio_r`, `name`, `index`
+  - urine_marker, audio_l, audio_r, name, index
 
 ---
 
-### ➕ 2.4 Generated Features and Validation
-- **Created Features**:
-  - **`age`**: Calculated from year of birth.  
-    `age = 2024 – birth`
-  - **`BMI`**: Calculated using height and weight.  
-    `BMI = mass_kg / (stature_inch × 0.0254)^2`
-- **Validation Results**:
-  - **Adding `age`**: F1 Score → 0.72686, AUC Score → 0.847056
-  - **Adding `BMI`**: F1 Score → 0.730212, AUC Score → 0.847312
+### 2.4 Generated Features and Validation
+- **Generated Features**:
+  - age: Calculated using year of birth.  
+    age = 2024 – birth
+  - BMI: Calculated using height and weight.  
+    BMI = mass_kg / (stature_inch × 0.0254)^2
+- **Validation**:
+  - Adding age improved F1 Score to 0.72686 and AUC Score to 0.847056.
+  - Adding BMI improved F1 Score to 0.730212 and AUC Score to 0.847312.
 
 ---
 
-## 🤖 3. Model Building and Optimization
+## 3. Model Building and Optimization
 
-### ⚡ 3.1 Overview of LightGBM Model
-**LightGBM** is a high-performance gradient boosting framework. For this project, the **DART (Dropout Additive Regression Trees)** boosting method was employed.
+### 3.1 Overview of LightGBM Model
+LightGBM is a high-performance machine learning model based on Gradient Boosting. For this project, the **DART (Dropout Additive Regression Trees)** boosting method was utilized.
 
 - **DART**:
-  - **Technique**: Applies dropout (from neural networks) to tree-based models to mitigate overfitting.
-  - **Mechanism**: Omits entire trees during training rather than individual features.
+  - Applies the dropout technique from neural networks to tree-based models to address over-specialization problems.
+  - **Working Principle**: Instead of dropping individual features, entire trees are omitted at the tree level.
   - **Advantages**:
-    - Reduces overfitting.
-    - Enhances generalization performance.
+    - Prevents overfitting.
+    - Improves generalization performance.
 
 ---
 
-### 🔀 3.2 Data Splitting (Using Stratified Sampling)
-- **Split Ratio**: 90% Training | 10% Validation
-- **Method**: **Stratified Sampling** to maintain target variable (`health_status`) distribution.
+### 3.2 Data Splitting (Using Stratified Sampling)
+The dataset was split into 90% training data and 10% validation data, with **Stratified Sampling** applied to maintain the proportion of the target variable (health_status).
 
-#### 📌 Why Stratified Sampling?
-- **Ensures**: Preservation of class distribution ratios.
-- **Benefits**:
-  - Addresses class imbalance.
-  - Provides stable and reliable evaluation metrics.
+- **Stratified Sampling**:
+  - Ensures the data distribution ratio is preserved during sampling.
+  - Example: If the population has a class distribution of 54% and 46%, the sample will maintain the same ratio.
+  - **Benefits**:
+    - Alleviates data imbalance issues.
+    - Enables stable model performance evaluation.
+
+- **Rationale for Use**:
+  - Random splitting may cause class imbalances.
+  - Stratified sampling preserves data distribution and ensures consistent evaluation metrics.
+
+
+### 3.3 Hyperparameter Optimization
+To maximize the model's performance, **GridSearchCV** was used to systematically tune the hyperparameters.
+
+#### 1) Model Structure Parameters
+- **max_depth (Tree Depth)**:
+  - Initially set to -1 (unlimited depth) and used as the baseline performance.
+  - GridSearch and manual exploration revealed that setting max_depth=7 achieved similar performance while reducing overfitting and training time.
+  - **Rationale**: Appropriate tree depth ensures balanced performance and prevents overfitting.
+  
+- **num_leaves (Number of Leaf Nodes)**:
+  - Theoretical rule: num_leaves should follow \( 2^{\text{max_depth}} \).
+  - For max_depth=7, \( 2^7 = 128 \). The optimal value was determined to be **num_leaves=45** through GridSearch.
+
+#### 2) Sampling Parameters
+- **subsample**:
+  - Fraction of data used for training each tree.  
+  - Optimal value: **subsample=0.1**.
+- **colsample_bytree**:
+  - Fraction of features used for building each tree.  
+  - Optimal value: **colsample_bytree=0.4**.
+
+#### 3) Regularization Parameters
+- To prevent overfitting, the following parameters were tuned within the range [0, 1] with a step of 0.1:
+  - **reg_alpha** (L1 Regularization): Optimal value: **0.7**.
+  - **reg_lambda** (L2 Regularization): Optimal value: **0.1**.
+  - **min_gain_to_split** (Minimum Gain for Splitting): Optimal value: **0**.
+
+#### 4) Leaf Node Parameters
+- **min_data_in_leaf**:
+  - Minimum number of data points in a leaf node to prevent overfitting.
+  - Explored values in the range [100, 1000] with steps of 100.
+  - Optimal value: **700**.
+
+#### 5) Additional Adjustments
+- **bagging_freq**:
+  - Controls the frequency of bagging. Setting it to 0 disables bagging.
+  - Optimal value: **bagging_freq=0**.
+- **n_estimators**:
+  - Number of trees in the model.
+  - Explored values between [1, 2000] with steps of 100.
+  - Optimal value: **1200**.
+- **max_bin**:
+  - Number of bins for discretizing features.
+  - Explored values between [100, 1000].
+  - Optimal value: **360**.
+  - **Effect**: Improves accuracy at the cost of slightly slower training, while preventing overfitting.
 
 ---
 
-### 🎛️ 3.3 Hyperparameter Optimization
-**Tool**: **GridSearchCV** was utilized for systematic hyperparameter tuning to maximize model performance.
+The final optimal hyperparameters significantly improved the model's performance. For further details, refer to the model evaluation results.
 
-#### 1) **Model Structure Parameters**
-- **`max_depth` (Tree Depth)**:
-  - **Initial**: `-1` (unlimited depth)
-  - **Optimal**: `7`
-  - **Rationale**: Balances performance and prevents overfitting.
-  
-- **`num_leaves` (Number of Leaf Nodes)**:
-  - **Rule**: Should follow \( 2^{\text{max_depth}} \)
-  - **For `max_depth=7`**: \( 2^7 = 128 \)
-  - **Optimal**: `45` (determined via GridSearch)
-
-#### 2) **Sampling Parameters**
-- **`subsample`**:
-  - **Definition**: Fraction of data used per tree.
-  - **Optimal**: `0.1`
-  
-- **`colsample_bytree`**:
-  - **Definition**: Fraction of features used per tree.
-  - **Optimal**: `0.4`
-
-#### 3) **Regularization Parameters**
-- **Purpose**: Prevent overfitting.
-- **Parameters Tuned** (range: [0, 1] with step 0.1):
-  - **`reg_alpha`** (L1 Regularization): `0.7`
-  - **`reg_lambda`** (L2 Regularization): `0.1`
-  - **`min_gain_to_split`** (Minimum Gain for Splitting): `0`
-
-#### 4) **Leaf Node Parameters**
-- **`min_data_in_leaf`**:
-  - **Definition**: Minimum samples per leaf node.
-  - **Explored Range**: [100, 1000] (step: 100)
-  - **Optimal**: `700`
-
-#### 5) **Additional Adjustments**
-- **`bagging_freq`**:
-  - **Definition**: Frequency of bagging.
-  - **Optimal**: `0` (disables bagging)
-  
-- **`n_estimators`**:
-  - **Definition**: Number of trees.
-  - **Explored Range**: [1, 2000] (step: 100)
-  - **Optimal**: `1200`
-  
-- **`max_bin`**:
-  - **Definition**: Number of bins for feature discretization.
-  - **Explored Range**: [100, 1000]
-  - **Optimal**: `360`
-  - **Effect**: Enhances accuracy, slightly slower training, prevents overfitting.
+- **Optimized Parameters**:
+  - max_depth: 7
+  - num_leaves: 45
+  - subsample: 0.1
+  - colsample_bytree: 0.4
+  - reg_alpha: 0.7
+  - reg_lambda: 0.1
+  - min_data_in_leaf: 700
+  - n_estimators: 1200
+  - max_bin: 360
 
 ---
 
-### 🌟 Final Optimized Hyperparameters
-- `max_depth`: **7**
-- `num_leaves`: **45**
-- `subsample`: **0.1**
-- `colsample_bytree`: **0.4**
-- `reg_alpha`: **0.7**
-- `reg_lambda`: **0.1**
-- `min_data_in_leaf`: **700**
-- `n_estimators`: **1200**
-- `max_bin`: **360**
+## 4. Model Performance Evaluation
 
-*These parameters significantly boosted model performance. Detailed evaluation results are available below.*
-
----
-
-## 📈 4. Model Performance Evaluation
-
-### 🏅 4.1 Results
+### 4.1 Results
 - **Validation Data**:
-  - **F1 Score**: `0.771309`
-  - **AUC Score**: `0.871433`
-  
+  - F1 Score: 0.771309
+  - AUC Score: 0.871433
 - **Kaggle Data**:
-  - **Public Score**: `0.85732`
-  - **Private Score**: `0.87279`
+  - Public Data: 0.85732
+  - Private Data: 0.87279
 
 ---
 
-## 📚 5. References
+## 5. References
 - [psystat Blog](https://psystat.tistory.com/131)
 - [potato Blog](https://potato-potahto.tistory.com/entry/Light-GBM-%EC%84%A4%EB%AA%85%ED%8A%B9%EC%A7%95%ED%95%98%EC%9D%B4%ED%8D%BC%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%EC%84%A4%EC%B9%98-%EC%82%AC%EC%9A%A9%EB%B0%A9%EB%B2%95#google_vignette)
 - [greatjoy Blog](https://greatjoy.tistory.com/72)
