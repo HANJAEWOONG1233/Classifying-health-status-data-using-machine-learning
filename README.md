@@ -1,4 +1,4 @@
-# 🌟 Building and Optimizing a Health Status Classification Model Using Healthcare Data 🌟
+#  Building and Optimizing a Health Status Classification Model Using Healthcare Data 
 
 ## 🚀 1. Introduction
 
