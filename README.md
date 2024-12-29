@@ -174,8 +174,8 @@ The final optimal hyperparameters significantly improved the model's performance
 ---
 
 ## 📚 5. References
+- [LightGBM Documentation](https://lightgbm.readthedocs.io/en/latest/)
 - [psystat Blog](https://psystat.tistory.com/131)
 - [potato Blog](https://potato-potahto.tistory.com/entry/Light-GBM-%EC%84%A4%EB%AA%85%ED%8A%B9%EC%A7%95%ED%95%98%EC%9D%B4%ED%8D%BC%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%EC%84%A4%EC%B9%98-%EC%82%AC%EC%9A%A9%EB%B0%A9%EB%B2%95#google_vignette)
 - [greatjoy Blog](https://greatjoy.tistory.com/72)
-- [LightGBM Documentation](https://lightgbm.readthedocs.io/en/latest/)
 
