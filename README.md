@@ -136,7 +136,7 @@ To maximize the model's performance, **GridSearchCV** was used to systematically
   - **Optimal Value**: `0`
 - **`n_estimators`**:
   - Number of trees in the model.
-  - Explored values between [1, 2000] with steps of 100.
+  - Explored values between [100, 2000] with steps of 100.
   - **Optimal Value**: `1200`
 - **`max_bin`**:
   - Number of bins for discretizing features.
